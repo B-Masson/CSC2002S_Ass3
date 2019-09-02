@@ -44,8 +44,8 @@ public class CloudData {
 				for(int x = 0; x < dimx; x++)
 					for(int y = 0; y < dimy; y++){
 						advection[t][x][y] = new Vector();
-						advection[t][x][y].x = sc.nextFloat();
-						advection[t][x][y].y = sc.nextFloat();
+						advection[t][x][y].add(sc.nextFloat());
+						advection[t][x][y].add(sc.nextFloat());
 						convection[t][x][y] = sc.nextFloat();
 					}
 			
@@ -61,6 +61,35 @@ public class CloudData {
 			e.printStackTrace();
 		}
 	}
+        
+        public void setClass()
+        {
+            for (int t = 0; t < dimt; t++)
+            {
+                for (int x = 0; x < dimx; x++)
+                {
+                    for (int y = 0; y < dimy; y++)
+                    {
+                        float windX = ((Float)advection[t][x][y].get(0)).floatValue();
+                        float windY = ((Float)advection[t][x][y].get(1)).floatValue();
+                        float windMag = windX + windY;
+                        if (Math.abs(convection[t][x][y]) > windMag)
+                        {
+                            classification[x][y][t] = 0;
+                        }
+                        else if (windMag > 0.2)
+                        {
+                            classification[t][x][y] = 1;
+                        }
+                        else
+                        {
+                            classification[t][x][y] = 2;
+                        }
+                    }
+                }
+            }
+        }
+        
 	
 	// write classification output to file
 	void writeData(String fileName, Vector wind){
@@ -68,7 +97,7 @@ public class CloudData {
 			 FileWriter fileWriter = new FileWriter(fileName);
 			 PrintWriter printWriter = new PrintWriter(fileWriter);
 			 printWriter.printf("%d %d %d\n", dimt, dimx, dimy);
-			 printWriter.printf("%f %f\n", wind.x, wind.y);
+			 printWriter.printf("%f %f\n", wind.get(0), wind.get(1));
 			 
 			 for(int t = 0; t < dimt; t++){
 				 for(int x = 0; x < dimx; x++){
