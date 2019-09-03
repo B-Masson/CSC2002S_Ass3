@@ -10,5 +10,12 @@
  */
 public class CloudMain
 {
-    
+    public static void main(String[] args)
+    {
+        CloudData data = new CloudData();
+        data.readData("simplesample_input.txt");
+        data.setAve();
+        data.printAve();
+        data.setClass();
+    }
 }
