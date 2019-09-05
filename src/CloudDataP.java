@@ -8,7 +8,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Vector;
 
-public class CloudData {
+public class CloudDataP {
 
 	Vector [][][] advection; // in-plane regular grid of wind vectors, that evolve over time
 	float [][][] convection; // vertical air movement strength, that evolves over time
@@ -17,7 +17,7 @@ public class CloudData {
         Vector sum = new Vector(); //stores average X and Y wind values for entire grid
         final double error = 0.01;
         
-        public CloudData()
+        public CloudDataP()
         {
             
         }
