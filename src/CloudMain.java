@@ -15,21 +15,29 @@ public class CloudMain
     {
         tick();
         CloudData data = new CloudData();
-        data.readData("largesample_input.txt");
+        CloudDataP parallel = new CloudDataP();
+        data.readData("simplesample_input.txt");
         System.out.println("Read time: " +tock() +"s");
         /*for (int i = 0; i < 3; i++)
         {
             tick();
             data.setAve();
             data.setClass();
-            data.writeData("testoutputlarge.txt");
+            //data.writeData("testoutputlarge.txt");
             System.out.println("Runtime (warm-up):" +tock() +"s");
         }*/
-        tick();
+        /*tick();
         data.setAve();
-        data.setClass();
-        data.writeData("testoutputlarge.txt");
+        data.setClass();     
         System.out.println("Runtime (true) " +tock() +"s");
+        System.gc();
+        tick();
+        data.writeData("testoutputmedium.txt");
+        System.out.println("Write time: " +tock() +"s");*/
+        data.setAve();
+        data.printAve();
+        parallel.readData("simplesample_input.txt");
+        parallel.calculate();
     }
     
     private static void tick() //Taken from lecture notes at permission of James Gain

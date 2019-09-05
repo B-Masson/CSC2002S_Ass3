@@ -7,19 +7,22 @@ import java.io.FileWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Vector;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
 
-public class CloudDataP {
+public class CloudDataP extends RecursiveTask<Integer>{
 
 	Vector [][][] advection; // in-plane regular grid of wind vectors, that evolve over time
 	float [][][] convection; // vertical air movement strength, that evolves over time
 	int [][][] classification; // cloud type per grid point, evolving over time
-	int dimx, dimy, dimt; // data dimensions
+	static int dimx, dimy, dimt; // data dimensions
         Vector sum = new Vector(); //stores average X and Y wind values for entire grid
-        final double error = 0.01;
+        int min, max, cut;
+        ForkJoinPool swimpool = new ForkJoinPool();
         
         public CloudDataP()
         {
-            
+
         }
         
 	// overall number of elements in the timeline grids
@@ -27,13 +30,12 @@ public class CloudDataP {
 		return dimt*dimx*dimy;
 	}
 	
-	// convert linear position into 3D location in simulation grid
-	void locate(int pos, int [] ind)
-	{
-		ind[0] = (int) pos / (dimx*dimy); // t
-		ind[1] = (pos % (dimx*dimy)) / dimy; // x
-		ind[2] = pos % (dimy); // y
-	}
+        public void calculate()
+        {
+            ParallelWorks pw = new ParallelWorks(0, dim(), advection);
+            swimpool.invoke(pw);
+            pw.printAve();
+        }
 	
 	// read cloud simulation data from file
 	void readData(String fileName){ 
@@ -87,7 +89,7 @@ public class CloudDataP {
                             classification[t][x][y] = 0;
                             //System.out.println("0");
                         }
-                        else if (windMag-error > 0.2)
+                        else if (windMag > 0.2)
                         {
                             classification[t][x][y] = 1;
                             //System.out.println("1");
@@ -176,5 +178,11 @@ public class CloudDataP {
 				e.printStackTrace();
 		 }
 	}
+
+    @Override
+    protected Integer compute()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
         
 }

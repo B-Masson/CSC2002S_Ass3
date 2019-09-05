@@ -15,7 +15,6 @@ public class CloudData {
 	int [][][] classification; // cloud type per grid point, evolving over time
 	int dimx, dimy, dimt; // data dimensions
         Vector sum = new Vector(); //stores average X and Y wind values for entire grid
-        final double error = 0.01;
         
         public CloudData()
         {
@@ -87,7 +86,7 @@ public class CloudData {
                             classification[t][x][y] = 0;
                             //System.out.println("0");
                         }
-                        else if (windMag-error > 0.2)
+                        else if (windMag > 0.2)
                         {
                             classification[t][x][y] = 1;
                             //System.out.println("1");
