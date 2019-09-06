@@ -3,12 +3,9 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
-import java.io.FileWriter;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.Vector;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveTask;
 
 public class CloudDataP{
 
@@ -32,12 +29,13 @@ public class CloudDataP{
 	
         public void calculate()
         {
-            Vector aveWinds = swimpool.invoke(new ParallelWorks(0, dim(),advection));
+            Vector aveWinds = swimpool.invoke(new ParallelWorks(0, dim(), 1, advection, classification));
             float windX = (Float)aveWinds.get(0);
             float windY = (Float)aveWinds.get(1);
             double outX = (double)((int)(windX/dim()*1000))/1000;
             double outY = (double)((int)(windY/dim()*1000))/1000;
-            System.out.println("[" +outX +";" +outY +"]");
+            sum.add(outX);
+            sum.add(outY);
         }
 	
 	// read cloud simulation data from file

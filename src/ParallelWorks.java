@@ -21,26 +21,73 @@ public class ParallelWorks extends RecursiveTask<Vector>
     Vector[][][] adList;
     float sumX, sumY;
     int[][][] classList;
-    static final int cut = 1;
+    int cut = 1;
+    int dimt, dimx, dimy;
     
     // convert linear position into 3D location in simulation grid
+    
+    public ParallelWorks(int l, int h, int c, Vector[][][] a, int[][][] k)
+    {
+        min = l;
+        max = h;
+        cut = 1;
+        adList = a;
+        classList = k;
+        dimt = CloudDataP.dimt;
+        dimx = CloudDataP.dimx;
+        dimy = CloudDataP.dimy;
+    }
+    
     private int[] locate(int pos)
     {
-        int dimt = CloudDataP.dimt;
-        int dimx = CloudDataP.dimx;
-        int dimy = CloudDataP.dimy;
+        
         int[] ind = new int[3];
         ind[0] = (int) pos / (dimx*dimy); // t
         ind[1] = (pos % (dimx*dimy)) / dimy; // x
         ind[2] = pos % (dimy); // y
         return ind;
     }
-    public ParallelWorks(int l, int h, Vector[][][] a)
-    {
-        min = l;
-        max = h;
-        adList = a;
-    }
+    
+    public void setClass(int t, int x, int y)
+        {
+            double windMag = getMag(t,x,y);
+            if (Math.abs(CloudDataP.convection[t][x][y]) > windMag)
+            {
+                classList[t][x][y] = 0;
+            }
+            else if (windMag > 0.2)
+            {
+                classList[t][x][y] = 1;
+            }
+            else
+            {
+                classList[t][x][y] = 2;
+            }
+        }
+    
+    public double getMag(int t, int x, int y)
+        {
+            float localX = 0;
+            float localY = 0;
+            for (int i = x-1; i <= x+1; i++) 
+            {
+                if (i >= 0 && i < dimx)
+                {
+                    for (int j = y-1; j <= y+1; j++)
+                    {
+                        if (j >= 0 && j < dimy)
+                        {
+                            localX += ((Float)adList[t][i][j].get(0));
+                            localY += ((Float)adList[t][i][j].get(1));
+                        }
+                    }
+                }
+            }
+            //System.out.println("");
+            double out = Math.pow(localX, 2) + Math.pow(localY, 2);
+            out = Math.sqrt(out);
+            return out;
+        }
     
     @Override
     protected Vector compute()
@@ -59,6 +106,7 @@ public class ParallelWorks extends RecursiveTask<Vector>
                 Vector temp = adList[tt][tx][ty];
                 sumX += ((Float)temp.get(0));
                 sumY += ((Float)temp.get(1));
+                setClass(tt, tx, ty);
             }
             out.add(sumX);
             out.add(sumY);
@@ -67,8 +115,8 @@ public class ParallelWorks extends RecursiveTask<Vector>
         else
         {
             int mid = (max+min)/2;
-            ParallelWorks left = new ParallelWorks(min, mid, adList);
-            ParallelWorks right = new ParallelWorks(mid, max, adList);
+            ParallelWorks left = new ParallelWorks(min, mid, cut, adList, classList);
+            ParallelWorks right = new ParallelWorks(mid, max, cut, adList, classList);
             left.fork();
             Vector rVec = right.compute();
             Vector lVec = left.join();

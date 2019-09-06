@@ -78,8 +78,8 @@ public class CloudData {
                     for (int y = 0; y < dimy; y++)
                     {                       
                         double windMag = getMag(t,x,y);
-                        //System.out.println("Mag is " +windMag);
-                        //System.out.println("And convection is " +convection[t][x][y]);
+                        //System.out.println("[" +t +"," +x +"," +y +"] Mag is " +windMag);
+                        //System.out.println("And convection is " +Math.abs(convection[t][x][y]));
                         //System.out.print("Therefore class: ");
                         if (Math.abs(convection[t][x][y]) > windMag)
                         {
@@ -111,7 +111,7 @@ public class CloudData {
                 {
                     for (int j = y-1; j <= y+1; j++)
                     {
-                        if (!(i == x && j == y) && j >= 0 && j < dimy)
+                        if (j >= 0 && j < dimy)
                         {
                             localX += ((Float)advection[t][i][j].get(0)).floatValue();
                             localY += ((Float)advection[t][i][j].get(1)).floatValue();

@@ -1,3 +1,6 @@
+
+import java.util.Vector;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -35,9 +38,11 @@ public class CloudMain
         data.writeData("testoutputmedium.txt");
         System.out.println("Write time: " +tock() +"s");*/
         data.setAve();
-        data.printAve();
+        data.setClass();
+        data.writeData("testoutput.txt");
         parallel.readData("simplesample_input.txt");
         parallel.calculate();
+        parallel.writeData("paraoutput.txt");
     }
     
     private static void tick() //Taken from lecture notes at permission of James Gain
