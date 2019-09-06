@@ -10,15 +10,15 @@ import java.util.Vector;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 
-public class CloudDataP extends RecursiveTask<Integer>{
+public class CloudDataP{
 
 	Vector [][][] advection; // in-plane regular grid of wind vectors, that evolve over time
-	float [][][] convection; // vertical air movement strength, that evolves over time
+	static float [][][] convection; // vertical air movement strength, that evolves over time
 	int [][][] classification; // cloud type per grid point, evolving over time
 	static int dimx, dimy, dimt; // data dimensions
         Vector sum = new Vector(); //stores average X and Y wind values for entire grid
         int min, max, cut;
-        ForkJoinPool swimpool = new ForkJoinPool();
+        static final ForkJoinPool swimpool = new ForkJoinPool();
         
         public CloudDataP()
         {
@@ -32,9 +32,12 @@ public class CloudDataP extends RecursiveTask<Integer>{
 	
         public void calculate()
         {
-            ParallelWorks pw = new ParallelWorks(0, dim(), advection);
-            swimpool.invoke(pw);
-            pw.printAve();
+            Vector aveWinds = swimpool.invoke(new ParallelWorks(0, dim(),advection));
+            float windX = (Float)aveWinds.get(0);
+            float windY = (Float)aveWinds.get(1);
+            double outX = (double)((int)(windX/dim()*1000))/1000;
+            double outY = (double)((int)(windY/dim()*1000))/1000;
+            System.out.println("[" +outX +";" +outY +"]");
         }
 	
 	// read cloud simulation data from file
@@ -177,12 +180,5 @@ public class CloudDataP extends RecursiveTask<Integer>{
 			 System.out.println("Unable to open output file "+fileName);
 				e.printStackTrace();
 		 }
-	}
-
-    @Override
-    protected Integer compute()
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-        
+	}        
 }

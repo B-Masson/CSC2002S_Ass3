@@ -14,13 +14,13 @@ import java.util.concurrent.RecursiveTask;
  *
  * @author Richard
  */
-public class ParallelWorks extends RecursiveAction
+public class ParallelWorks extends RecursiveTask<Vector>
 {
     int min;
     int max;
     Vector[][][] adList;
-    Vector[][][] classList;
     float sumX, sumY;
+    int[][][] classList;
     static final int cut = 1;
     
     // convert linear position into 3D location in simulation grid
@@ -40,38 +40,45 @@ public class ParallelWorks extends RecursiveAction
         min = l;
         max = h;
         adList = a;
-        sumX = 0;
-        sumY = 0;
     }
     
     @Override
-    protected void compute()
+    protected Vector compute()
     {
         if ((max-min) <= cut)
         {
+            sumX = 0;
+            sumY = 0;
+            Vector out = new Vector();
             for (int i = min; i < max; i++)
-            {
+            { 
                 int[] loc = locate(i);
                 int tt = loc[0];
                 int tx = loc[1];
                 int ty = loc[2];
                 Vector temp = adList[tt][tx][ty];
-                sumX += ((Float)temp.get(0)).floatValue();
-                sumY += ((Float)temp.get(1)).floatValue();
+                sumX += ((Float)temp.get(0));
+                sumY += ((Float)temp.get(1));
             }
+            out.add(sumX);
+            out.add(sumY);
+            return out;
         }
         else
         {
             int mid = (max+min)/2;
-            invokeAll(new ParallelWorks(min, mid, adList), new ParallelWorks(mid, max, adList));
+            ParallelWorks left = new ParallelWorks(min, mid, adList);
+            ParallelWorks right = new ParallelWorks(mid, max, adList);
+            left.fork();
+            Vector rVec = right.compute();
+            Vector lVec = left.join();
+            float tempx = ((Float)rVec.get(0)) + ((Float)lVec.get(0));
+            float tempy = ((Float)rVec.get(1)) + ((Float)lVec.get(1));
+            Vector resultant = new Vector();
+            resultant.add(tempx);
+            resultant.add(tempy);
+            return resultant;
         }
     }
     
-    public void printAve()
-    {
-        int total = CloudDataP.dimt*CloudDataP.dimx*CloudDataP.dimy;
-        double outX = (double)((int)(sumX/total*1000))/1000;
-        double outY = (double)((int)(sumY/total*1000))/1000;
-        System.out.println(outX +"," +outY);
-    }
 }
