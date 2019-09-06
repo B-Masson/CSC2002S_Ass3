@@ -19,7 +19,7 @@ public class CloudDataP{
         
         public CloudDataP()
         {
-
+            
         }
         
 	// overall number of elements in the timeline grids
@@ -29,7 +29,7 @@ public class CloudDataP{
 	
         public void calculate()
         {
-            Vector aveWinds = swimpool.invoke(new ParallelWorks(0, dim(), 1, advection, classification));
+            Vector aveWinds = swimpool.invoke(new ParallelWorks(0, dim(), advection, classification));
             float windX = (Float)aveWinds.get(0);
             float windY = (Float)aveWinds.get(1);
             double outX = (double)((int)(windX/dim()*1000))/1000;
