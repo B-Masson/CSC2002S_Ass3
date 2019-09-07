@@ -21,15 +21,16 @@ public class ParallelWorks extends RecursiveTask<Vector>
     Vector[][][] adList;
     float sumX, sumY;
     int[][][] classList;
-    final int cut = 1;
+    final int cut;
     int dimt, dimx, dimy;
     
     // convert linear position into 3D location in simulation grid
     
-    public ParallelWorks(int l, int h, Vector[][][] a, int[][][] k)
+    public ParallelWorks(int l, int h, int c, Vector[][][] a, int[][][] k)
     {
         min = l;
         max = h;
+        cut = c;
         adList = a;
         classList = k;
         dimt = CloudDataP.dimt;
@@ -114,8 +115,8 @@ public class ParallelWorks extends RecursiveTask<Vector>
         else
         {
             int mid = (max+min)/2;
-            ParallelWorks left = new ParallelWorks(min, mid, adList, classList);
-            ParallelWorks right = new ParallelWorks(mid, max, adList, classList);
+            ParallelWorks left = new ParallelWorks(min, mid, cut, adList, classList);
+            ParallelWorks right = new ParallelWorks(mid, max, cut, adList, classList);
             left.fork();
             Vector rVec = right.compute();
             Vector lVec = left.join();

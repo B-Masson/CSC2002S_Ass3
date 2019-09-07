@@ -14,12 +14,18 @@ public class CloudDataP{
 	int [][][] classification; // cloud type per grid point, evolving over time
 	static int dimx, dimy, dimt; // data dimensions
         Vector sum = new Vector(); //stores average X and Y wind values for entire grid
-        int min, max, cut;
+        int min, max;
+        int cut;
         static final ForkJoinPool swimpool = new ForkJoinPool();
         
         public CloudDataP()
         {
             
+        }
+        
+        public void setCut(int c)
+        {
+            cut = c;
         }
         
 	// overall number of elements in the timeline grids
@@ -29,7 +35,7 @@ public class CloudDataP{
 	
         public void calculate()
         {
-            Vector aveWinds = swimpool.invoke(new ParallelWorks(0, dim(), advection, classification));
+            Vector aveWinds = swimpool.invoke(new ParallelWorks(0, dim(), cut, advection, classification));
             float windX = (Float)aveWinds.get(0);
             float windY = (Float)aveWinds.get(1);
             double outX = (double)((int)(windX/dim()*1000))/1000;
