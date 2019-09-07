@@ -22,7 +22,7 @@ public class CloudMain
         String inFile = args[0];
         String outFile = args[1];
         float sumS = 0, sumP = 0;
-        if (outFile.equals("optimise.txt"))
+        if (outFile.equals("optimise"))
         {
             System.out.println("Engaging Optimisation Protocol");
             int i = 1;
@@ -50,7 +50,7 @@ public class CloudMain
         {
             CloudData data = new CloudData();
             CloudDataP parallel = new CloudDataP();
-            parallel.setCut(1);
+            parallel.setCut(9300);
             data.readData(inFile);
             parallel.readData(inFile);
             System.out.println("Read in");
