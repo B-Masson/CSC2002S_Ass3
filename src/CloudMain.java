@@ -19,6 +19,7 @@ public class CloudMain
     static long startTime = 0; //used for timing methods
     public static void main(String[] args) throws FileNotFoundException
     {
+        try{
         String inFile = args[0];
         String outFile = args[1];
         float sumS = 0, sumP = 0;
@@ -79,6 +80,11 @@ public class CloudMain
             System.out.println("Parallel Average: " +(sumP/5) +"s");
             //data.writeData("seqout_large.txt");
             parallel.writeData(outFile);
+        }
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.println("Warning: " +e);
         }
     }
     
